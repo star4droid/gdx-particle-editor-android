@@ -22,7 +22,7 @@ import org.lwjgl.glfw.*;
 
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
-import com.badlogic.gdx.input.KeyboardHeightObserver;
+//import com.badlogic.gdx.input.KeyboardHeightObserver;
 
 public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
 
@@ -365,10 +365,9 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
         listener.canceled();
     }
 
-    @Override
-    public void setKeyboardHeightObserver(KeyboardHeightObserver observer) {
-    }
-
+    // @Override
+    // public void setKeyboardHeightObserver(KeyboardHeightObserver observer) {
+    // }
     @Override
     public long getCurrentEventTime() {
         // queue sets its event time for each event dequeued/processed
