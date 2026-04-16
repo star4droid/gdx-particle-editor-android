@@ -40,6 +40,7 @@ subprojects {
   version = '1.0.9'
   ext.appName = 'gdx-particle-editor'
   repositories {
+    google()
     mavenCentral()
     maven { url 'https://s01.oss.sonatype.org' }
     // You may want to remove the following line if you have errors downloading dependencies.
