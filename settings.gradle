@@ -1,1 +1,1 @@
-include 'core', 'android', 'filepicker'
+include 'core', 'android'
