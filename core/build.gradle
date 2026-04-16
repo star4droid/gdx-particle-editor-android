@@ -60,16 +60,21 @@ jar {
   archiveFileName.set(appName + ".jar")
 // using 'lib' instead of the default 'libs' appears to be needed by jpackageimage.
   destinationDirectory = file("$project.buildDir/lib")
-// the duplicatesStrategy matters starting in Gradle 7.0; this setting works.
+// setting the manifest makes the JAR runnable.
+  manifest {
+    attributes 'Main-Class': project.mainClassName
+  }
+}
+
+tasks.register('fatJar', Jar) {
+  archiveFileName.set(appName + "-fat.jar")
+  destinationDirectory = file("$project.buildDir/lib")
   duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
   dependsOn configurations.runtimeClasspath
   from { configurations.runtimeClasspath.collect { it.isDirectory() ? it : zipTree(it) } }
+  with jar
 // these "exclude" lines remove some unnecessary duplicate files in the output JAR.
   exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
-  dependencies {
-    exclude('META-INF/INDEX.LIST', 'META-INF/maven/**')
-  }
-// setting the manifest makes the JAR runnable.
   manifest {
     attributes 'Main-Class': project.mainClassName
   }
@@ -112,7 +117,7 @@ if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_14)) {
   }
 }
 
-// Equivalent to the jar task; here for compatibility with gdx-setup.
+// Equivalent to the fat Jar task; here for compatibility with gdx-setup.
 tasks.register('dist') {
-  dependsOn['jar']
+  dependsOn['fatJar']
 }
