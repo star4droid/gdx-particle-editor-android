@@ -1,31 +1,28 @@
 package com.ray3k.gdxparticleeditor;
 
-import android.content.Context;
-//import androidx.activity.result.ActivityResultLauncher;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.backends.android.AndroidApplication;
 import com.badlogic.gdx.files.FileHandle;
 import com.badlogic.gdx.utils.Array;
 import com.ray3k.stripe.PopTable;
-import com.star4droid.particle.editor.FilesDialog;
-import com.star4droid.particle.editor.Star2dApp;
-import android.os.Handler;
-import android.os.Looper;
-//import com.star4droid.texturepacker.Utils;
 
-/** A convenience class that provides static methods to open OS native file dialogs. */
+/**
+ * A convenience class that provides static methods to open OS native file
+ * dialogs.
+ */
 public class FileDialogs {
-  public static String savePath=null;
-  public static String[] selectedFiles=null;
-  //public static ActivityResultLauncher<String[]> pickOne,pickMulti;
-  //public static ActivityResultLauncher save;
-  public static Array<FileHandle> openMultipleDialog(
-    String title, String defaultPath, String[] filterPatterns, String filterDescription) {
-	  /*
+
+    public static String savePath = null;
+    public static String[] selectedFiles = null;
+    //public static ActivityResultLauncher<String[]> pickOne,pickMulti;
+    //public static ActivityResultLauncher save;
+
+    public static Array<FileHandle> openMultipleDialog(
+            String title, String defaultPath, String[] filterPatterns, String filterDescription) {
+        /*
 	  selectedFiles = null;
-	  
+
 	  new Handler(Looper.getMainLooper()).post(()->{
-		  
+
 	  });
 	  while(selectedFiles==null){}
 	  Array<FileHandle> array = new Array<>();
@@ -35,16 +32,16 @@ public class FileDialogs {
 		  array.add(fileHandle);
 		}
 	  return array;*/
-	  return null;
-  }
+        return null;
+    }
 
-  public static FileHandle openDialog(
-      String title, String defaultPath, String[] filterPatterns, String filterDescription) {
-    	/*
+    public static FileHandle openDialog(
+            String title, String defaultPath, String[] filterPatterns, String filterDescription) {
+        /*
 		selectedFiles = null;
-	  
+
 	  new Handler(Looper.getMainLooper()).post(()->{
-		  
+
 	  });
 	  while(selectedFiles==null){}
 	  Array<FileHandle> array = new Array<>();
@@ -54,22 +51,22 @@ public class FileDialogs {
 		  array.add(fileHandle);
 		}
 	  return array.size > 0 ? array.get(0) : null;
-	  */
-	  return null;
-  }
-  
-  public static FileHandle savedFile;
+         */
+        return null;
+    }
 
-  public static FileHandle saveDialog(
-      String title,
-      String defaultPath,
-      String defaultName,
-      String[] filterPatterns,
-      String filterDescription) {
-	savedFile = Gdx.files.absolute(((AndroidApplication)Gdx.app).getContext().getExternalFilesDir("save").toString().concat("/").concat(defaultName));
-    savedFile.writeString("",false);
-	//Utils.saveFile(defaultName,save);
-	return savedFile;
-  }
-  
+    public static FileHandle savedFile;
+
+    public static FileHandle saveDialog(
+            String title,
+            String defaultPath,
+            String defaultName,
+            String[] filterPatterns,
+            String filterDescription) {
+        savedFile = Gdx.files.absolute(((AndroidApplication) Gdx.app).getContext().getExternalFilesDir("save").toString().concat("/").concat(defaultName));
+        savedFile.writeString("", false);
+        //Utils.saveFile(defaultName,save);
+        return savedFile;
+    }
+
 }
