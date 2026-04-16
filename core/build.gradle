@@ -19,6 +19,8 @@ if (JavaVersion.current().isCompatibleWith(JavaVersion.VERSION_14)) {
 }
 else {
   apply plugin: 'application'
+  // android plugin
+  apply plugin: 'com.android.application'
 }
 
 sourceSets.main.resources.srcDirs += [ rootProject.file('assets').path ]
