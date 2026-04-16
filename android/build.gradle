@@ -31,7 +31,6 @@ configurations { natives }
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     implementation fileTree(dir: 'libs', include: ['*.aar'])
-    implementation project(':filepicker')
     implementation project(':core')
 
     // LibGDX core and Android backend
