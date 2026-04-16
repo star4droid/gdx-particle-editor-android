@@ -63,7 +63,14 @@ public class FileDialogs {
             String defaultName,
             String[] filterPatterns,
             String filterDescription) {
-        savedFile = Gdx.files.absolute(((AndroidApplication) Gdx.app).getContext().getExternalFilesDir("save").toString().concat("/").concat(defaultName));
+        try {
+            Object context = Gdx.app.getClass().getMethod("getContext").invoke(Gdx.app);
+            java.io.File file = (java.io.File) context.getClass().getMethod("getExternalFilesDir", String.class).invoke(context, "save");
+            savedFile = Gdx.files.absolute(file.toString().concat("/").concat(defaultName));
+        } catch (Exception e) {
+            e.printStackTrace();
+            savedFile = Gdx.files.absolute(Gdx.files.getExternalStoragePath() + "/save/" + defaultName);
+        }
         savedFile.writeString("", false);
         //Utils.saveFile(defaultName,save);
         return savedFile;

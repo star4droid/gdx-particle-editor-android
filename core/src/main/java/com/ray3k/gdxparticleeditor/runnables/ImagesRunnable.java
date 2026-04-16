@@ -25,18 +25,21 @@ public class ImagesRunnable implements Runnable {
     private static boolean open;
 
     @Override
-    public void run () {
-        if (open)
+    public void run() {
+        if (open) {
             return;
+        }
 
         ExecutorService service = Executors.newSingleThreadExecutor();
         service.execute(() -> {
             open = true;
             stage.getRoot().setTouchable(Touchable.disabled);
 
-            if (effectEmittersPanel == null || emitterPropertiesPanel == null) return;
+            if (effectEmittersPanel == null || emitterPropertiesPanel == null) {
+                return;
+            }
 
-            var selectedFileHandles = FileDialogs.openMultipleDialog("Add images", getDefaultImagePath(), new String[] {"png","jpg","jpeg"}, "Image files (*.png;*.jpg;*.jpeg)");
+            var selectedFileHandles = FileDialogs.openMultipleDialog("Add images", getDefaultImagePath(), new String[]{"png", "jpg", "jpeg"}, "Image files (*.png;*.jpg;*.jpeg)");
             if (selectedFileHandles == null) {
                 stage.getRoot().setTouchable(Touchable.enabled);
                 open = false;
@@ -56,13 +59,13 @@ public class ImagesRunnable implements Runnable {
         service.shutdown();
     }
 
-    private void loadOnMainThread (Array<FileHandle> selectedFileHandles) {
-        UndoManager.add(new ImagesAddUndoable(selectedEmitter, selectedFileHandles, "Add Images"));
+    private void loadOnMainThread(Array<FileHandle> selectedFileHandles) {
+        UndoManager.add(new ImagesAddUndoable(selectedEmitter, selectedEmitter.getImagePaths().size, selectedFileHandles, "Add Images"));
         if (selectedFileHandles.size > 0) {
             imagesSubPanel.updateList();
             imagesSubPanel.updateDisabled();
 
-            showToast(selectedFileHandles.size == 1 ? "Added image ".concat( selectedFileHandles.first().name()): "Added ".concat(String.valueOf(selectedFileHandles.size)).concat(" images"));
+            showToast(selectedFileHandles.size == 1 ? "Added image ".concat(selectedFileHandles.first().name()) : "Added ".concat(String.valueOf(selectedFileHandles.size)).concat(" images"));
         }
     }
 }

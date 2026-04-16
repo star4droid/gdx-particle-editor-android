@@ -1,4 +1,4 @@
-/*******************************************************************************
+/** *****************************************************************************
  * Copyright 2011 See AUTHORS file.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
@@ -12,8 +12,7 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- ******************************************************************************/
-
+ ***************************************************************************** */
 package com.badlogic.gdx.backends.lwjgl3;
 
 import com.badlogic.gdx.*;
@@ -23,8 +22,10 @@ import org.lwjgl.glfw.*;
 
 import java.nio.DoubleBuffer;
 import java.nio.IntBuffer;
+import com.badlogic.gdx.input.KeyboardHeightObserver;
 
 public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
+
     final Lwjgl3Window window;
     private InputProcessor inputProcessor;
     final InputEventQueue eventQueue = new InputEventQueue();
@@ -38,26 +39,28 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
 
     private GLFWKeyCallback keyCallback = new GLFWKeyCallback() {
         @Override
-        public void invoke (long window, int key, int scancode, int action, int mods) {
+        public void invoke(long window, int key, int scancode, int action, int mods) {
             keyCallback(window, key, scancode, action, mods);
         }
     };
 
     GLFWCharCallback charCallback = new GLFWCharCallback() {
         @Override
-        public void invoke (long window, int codepoint) {
-            if ((codepoint & 0xff00) == 0xf700) return;
-            lastCharacter = (char)codepoint;
+        public void invoke(long window, int codepoint) {
+            if ((codepoint & 0xff00) == 0xf700) {
+                return;
+            }
+            lastCharacter = (char) codepoint;
             DefaultLwjgl3Input.this.window.getGraphics().requestRendering();
-            eventQueue.keyTyped((char)codepoint, System.nanoTime());
+            eventQueue.keyTyped((char) codepoint, System.nanoTime());
         }
     };
 
     private GLFWScrollCallback scrollCallback = new GLFWScrollCallback() {
         @Override
-        public void invoke (long window, double scrollX, double scrollY) {
+        public void invoke(long window, double scrollX, double scrollY) {
             DefaultLwjgl3Input.this.window.getGraphics().requestRendering();
-            eventQueue.scrolled(-(float)scrollX, -(float)scrollY, System.nanoTime());
+            eventQueue.scrolled(-(float) scrollX, -(float) scrollY, System.nanoTime());
         }
     };
 
@@ -66,7 +69,7 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
         private int logicalMouseX;
 
         @Override
-        public void invoke (long windowHandle, double x, double y) {
+        public void invoke(long windowHandle, double x, double y) {
 //            deltaX = (int)x - logicalMouseX;
 //            deltaY = (int)y - logicalMouseY;
 //            mouseX = logicalMouseX = (int)x;
@@ -93,9 +96,11 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
 
     private GLFWMouseButtonCallback mouseButtonCallback = new GLFWMouseButtonCallback() {
         @Override
-        public void invoke (long window, int button, int action, int mods) {
+        public void invoke(long window, int button, int action, int mods) {
             int gdxButton = toGdxButton(button);
-            if (button != -1 && gdxButton == -1) return;
+            if (button != -1 && gdxButton == -1) {
+                return;
+            }
 
             long time = System.nanoTime();
             if (action == GLFW.GLFW_PRESS) {
@@ -111,22 +116,32 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
             }
         }
 
-        private int toGdxButton (int button) {
-            if (button == 0) return Buttons.LEFT;
-            if (button == 1) return Buttons.RIGHT;
-            if (button == 2) return Buttons.MIDDLE;
-            if (button == 3) return Buttons.BACK;
-            if (button == 4) return Buttons.FORWARD;
+        private int toGdxButton(int button) {
+            if (button == 0) {
+                return Buttons.LEFT;
+            }
+            if (button == 1) {
+                return Buttons.RIGHT;
+            }
+            if (button == 2) {
+                return Buttons.MIDDLE;
+            }
+            if (button == 3) {
+                return Buttons.BACK;
+            }
+            if (button == 4) {
+                return Buttons.FORWARD;
+            }
             return -1;
         }
     };
 
-    public DefaultLwjgl3Input (Lwjgl3Window window) {
+    public DefaultLwjgl3Input(Lwjgl3Window window) {
         this.window = window;
         windowHandleChanged(window.getWindowHandle());
     }
 
-    void keyCallback (long window, int key, int scancode, int action, int mods) {
+    void keyCallback(long window, int key, int scancode, int action, int mods) {
         switch (action) {
             case GLFW.GLFW_PRESS:
                 key = getGdxKeyCode(key);
@@ -138,7 +153,9 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
                 DefaultLwjgl3Input.this.window.getGraphics().requestRendering();
                 lastCharacter = 0;
                 char character = characterForKeyCode(key);
-                if (character != 0) charCallback.invoke(window, character);
+                if (character != 0) {
+                    charCallback.invoke(window, character);
+                }
                 break;
             case GLFW.GLFW_RELEASE:
                 key = getGdxKeyCode(key);
@@ -157,7 +174,7 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
     }
 
     @Override
-    public void resetPollingStates () {
+    public void resetPollingStates() {
         justTouched = false;
         keyJustPressed = false;
         for (int i = 0; i < justPressedKeys.length; i++) {
@@ -170,7 +187,7 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
     }
 
     @Override
-    public void windowHandleChanged (long windowHandle) {
+    public void windowHandleChanged(long windowHandle) {
         resetPollingStates();
         GLFW.glfwSetKeyCallback(window.getWindowHandle(), keyCallback);
         GLFW.glfwSetCharCallback(window.getWindowHandle(), charCallback);
@@ -196,21 +213,23 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
         float x = ((float) curX.get());
         float y = ((float) curY.get());
 
-        if ((int) x == logicalMouseX && (int) y == logicalMouseY) return;
+        if ((int) x == logicalMouseX && (int) y == logicalMouseY) {
+            return;
+        }
 
-        deltaX = (int)x - logicalMouseX;
-        deltaY = (int)y - logicalMouseY;
+        deltaX = (int) x - logicalMouseX;
+        deltaY = (int) y - logicalMouseY;
 
         mouseX = logicalMouseX = (int) x;
         mouseY = logicalMouseY = (int) y;
 
         if (window.getConfig().hdpiMode == HdpiMode.Pixels) {
-            float xScale = window.getGraphics().getBackBufferWidth() / (float)window.getGraphics().getLogicalWidth();
-            float yScale = window.getGraphics().getBackBufferHeight() / (float)window.getGraphics().getLogicalHeight();
-            deltaX = (int)(deltaX * xScale);
-            deltaY = (int)(deltaY * yScale);
-            mouseX = (int)(mouseX * xScale);
-            mouseY = (int)(mouseY * yScale);
+            float xScale = window.getGraphics().getBackBufferWidth() / (float) window.getGraphics().getLogicalWidth();
+            float yScale = window.getGraphics().getBackBufferHeight() / (float) window.getGraphics().getLogicalHeight();
+            deltaX = (int) (deltaX * xScale);
+            deltaY = (int) (deltaY * yScale);
+            mouseX = (int) (mouseX * xScale);
+            mouseY = (int) (mouseY * yScale);
         }
 
         DefaultLwjgl3Input.this.window.getGraphics().requestRendering();
@@ -223,14 +242,14 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
     }
 
     @Override
-    public void update () {
+    public void update() {
         processMousePosition();
 
         eventQueue.drain(inputProcessor);
     }
 
     @Override
-    public void prepareNext () {
+    public void prepareNext() {
         if (justTouched) {
             justTouched = false;
             for (int i = 0; i < justPressedButtons.length; i++) {
@@ -249,86 +268,86 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
     }
 
     @Override
-    public int getMaxPointers () {
+    public int getMaxPointers() {
         return 1;
     }
 
     @Override
-    public int getX () {
+    public int getX() {
         return mouseX;
     }
 
     @Override
-    public int getX (int pointer) {
+    public int getX(int pointer) {
         return pointer == 0 ? mouseX : 0;
     }
 
     @Override
-    public int getDeltaX () {
+    public int getDeltaX() {
         return deltaX;
     }
 
     @Override
-    public int getDeltaX (int pointer) {
+    public int getDeltaX(int pointer) {
         return pointer == 0 ? deltaX : 0;
     }
 
     @Override
-    public int getY () {
+    public int getY() {
         return mouseY;
     }
 
     @Override
-    public int getY (int pointer) {
+    public int getY(int pointer) {
         return pointer == 0 ? mouseY : 0;
     }
 
     @Override
-    public int getDeltaY () {
+    public int getDeltaY() {
         return deltaY;
     }
 
     @Override
-    public int getDeltaY (int pointer) {
+    public int getDeltaY(int pointer) {
         return pointer == 0 ? deltaY : 0;
     }
 
     @Override
-    public boolean isTouched () {
+    public boolean isTouched() {
         return GLFW.glfwGetMouseButton(window.getWindowHandle(), GLFW.GLFW_MOUSE_BUTTON_1) == GLFW.GLFW_PRESS
-            || GLFW.glfwGetMouseButton(window.getWindowHandle(), GLFW.GLFW_MOUSE_BUTTON_2) == GLFW.GLFW_PRESS
-            || GLFW.glfwGetMouseButton(window.getWindowHandle(), GLFW.GLFW_MOUSE_BUTTON_3) == GLFW.GLFW_PRESS
-            || GLFW.glfwGetMouseButton(window.getWindowHandle(), GLFW.GLFW_MOUSE_BUTTON_4) == GLFW.GLFW_PRESS
-            || GLFW.glfwGetMouseButton(window.getWindowHandle(), GLFW.GLFW_MOUSE_BUTTON_5) == GLFW.GLFW_PRESS;
+                || GLFW.glfwGetMouseButton(window.getWindowHandle(), GLFW.GLFW_MOUSE_BUTTON_2) == GLFW.GLFW_PRESS
+                || GLFW.glfwGetMouseButton(window.getWindowHandle(), GLFW.GLFW_MOUSE_BUTTON_3) == GLFW.GLFW_PRESS
+                || GLFW.glfwGetMouseButton(window.getWindowHandle(), GLFW.GLFW_MOUSE_BUTTON_4) == GLFW.GLFW_PRESS
+                || GLFW.glfwGetMouseButton(window.getWindowHandle(), GLFW.GLFW_MOUSE_BUTTON_5) == GLFW.GLFW_PRESS;
     }
 
     @Override
-    public boolean justTouched () {
+    public boolean justTouched() {
         return justTouched;
     }
 
     @Override
-    public boolean isTouched (int pointer) {
+    public boolean isTouched(int pointer) {
         return pointer == 0 ? isTouched() : false;
     }
 
     @Override
-    public float getPressure () {
+    public float getPressure() {
         return getPressure(0);
     }
 
     @Override
-    public float getPressure (int pointer) {
+    public float getPressure(int pointer) {
         return isTouched(pointer) ? 1 : 0;
     }
 
     @Override
-    public boolean isButtonPressed (int button) {
+    public boolean isButtonPressed(int button) {
         return GLFW.glfwGetMouseButton(window.getWindowHandle(), button) == GLFW.GLFW_PRESS;
     }
 
     @Override
-    public boolean isButtonJustPressed (int button) {
+    public boolean isButtonJustPressed(int button) {
         if (button < 0 || button >= justPressedButtons.length) {
             return false;
         }
@@ -336,56 +355,60 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
     }
 
     @Override
-    public void getTextInput (TextInputListener listener, String title, String text, String hint) {
+    public void getTextInput(TextInputListener listener, String title, String text, String hint) {
         getTextInput(listener, title, text, hint, OnscreenKeyboardType.Default);
     }
 
     @Override
-    public void getTextInput (TextInputListener listener, String title, String text, String hint, OnscreenKeyboardType type) {
+    public void getTextInput(TextInputListener listener, String title, String text, String hint, OnscreenKeyboardType type) {
         // FIXME getTextInput does nothing
         listener.canceled();
     }
 
     @Override
-    public long getCurrentEventTime () {
+    public void setKeyboardHeightObserver(KeyboardHeightObserver observer) {
+    }
+
+    @Override
+    public long getCurrentEventTime() {
         // queue sets its event time for each event dequeued/processed
         return eventQueue.getCurrentEventTime();
     }
 
     @Override
-    public void setInputProcessor (InputProcessor processor) {
+    public void setInputProcessor(InputProcessor processor) {
         this.inputProcessor = processor;
     }
 
     @Override
-    public InputProcessor getInputProcessor () {
+    public InputProcessor getInputProcessor() {
         return inputProcessor;
     }
 
     @Override
-    public void setCursorCatched (boolean catched) {
+    public void setCursorCatched(boolean catched) {
         GLFW.glfwSetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR,
-            catched ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
+                catched ? GLFW.GLFW_CURSOR_DISABLED : GLFW.GLFW_CURSOR_NORMAL);
     }
 
     @Override
-    public boolean isCursorCatched () {
+    public boolean isCursorCatched() {
         return GLFW.glfwGetInputMode(window.getWindowHandle(), GLFW.GLFW_CURSOR) == GLFW.GLFW_CURSOR_DISABLED;
     }
 
     @Override
-    public void setCursorPosition (int x, int y) {
+    public void setCursorPosition(int x, int y) {
         if (window.getConfig().hdpiMode == HdpiMode.Pixels) {
-            float xScale = window.getGraphics().getLogicalWidth() / (float)window.getGraphics().getBackBufferWidth();
-            float yScale = window.getGraphics().getLogicalHeight() / (float)window.getGraphics().getBackBufferHeight();
-            x = (int)(x * xScale);
-            y = (int)(y * yScale);
+            float xScale = window.getGraphics().getLogicalWidth() / (float) window.getGraphics().getBackBufferWidth();
+            float yScale = window.getGraphics().getLogicalHeight() / (float) window.getGraphics().getBackBufferHeight();
+            x = (int) (x * xScale);
+            y = (int) (y * yScale);
         }
         GLFW.glfwSetCursorPos(window.getWindowHandle(), x, y);
         cursorPosCallback.invoke(window.getWindowHandle(), x, y);
     }
 
-    protected char characterForKeyCode (int key) {
+    protected char characterForKeyCode(int key) {
         // Map certain key codes to character codes.
         switch (key) {
             case Keys.BACKSPACE:
@@ -401,7 +424,7 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
         return 0;
     }
 
-    public int getGdxKeyCode (int lwjglKeyCode) {
+    public int getGdxKeyCode(int lwjglKeyCode) {
         switch (lwjglKeyCode) {
             case GLFW.GLFW_KEY_SPACE:
                 return Input.Keys.SPACE;
@@ -648,7 +671,7 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
     }
 
     @Override
-    public void dispose () {
+    public void dispose() {
         keyCallback.free();
         charCallback.free();
         scrollCallback.free();
@@ -659,92 +682,91 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
     // --------------------------------------------------------------------------
     // -------------------------- Nothing to see below this line except for stubs
     // --------------------------------------------------------------------------
-
     @Override
-    public float getAccelerometerX () {
+    public float getAccelerometerX() {
         return 0;
     }
 
     @Override
-    public float getAccelerometerY () {
+    public float getAccelerometerY() {
         return 0;
     }
 
     @Override
-    public float getAccelerometerZ () {
+    public float getAccelerometerZ() {
         return 0;
     }
 
     @Override
-    public boolean isPeripheralAvailable (Peripheral peripheral) {
+    public boolean isPeripheralAvailable(Peripheral peripheral) {
         return peripheral == Peripheral.HardwareKeyboard;
     }
 
     @Override
-    public int getRotation () {
+    public int getRotation() {
         return 0;
     }
 
     @Override
-    public Orientation getNativeOrientation () {
+    public Orientation getNativeOrientation() {
         return Orientation.Landscape;
     }
 
     @Override
-    public void setOnscreenKeyboardVisible (boolean visible) {
+    public void setOnscreenKeyboardVisible(boolean visible) {
     }
 
     @Override
-    public void setOnscreenKeyboardVisible (boolean visible, OnscreenKeyboardType type) {
+    public void setOnscreenKeyboardVisible(boolean visible, OnscreenKeyboardType type) {
     }
 
     @Override
-    public void vibrate (int milliseconds) {
+    public void vibrate(int milliseconds) {
     }
 
     @Override
-    public void vibrate (int milliseconds, boolean fallback) {
+    public void vibrate(int milliseconds, boolean fallback) {
     }
 
     @Override
-    public void vibrate (int milliseconds, int amplitude, boolean fallback) {
+    public void vibrate(int milliseconds, int amplitude, boolean fallback) {
     }
 
     @Override
-    public void vibrate (VibrationType vibrationType) {
+    public void vibrate(VibrationType vibrationType) {
     }
 
     @Override
-    public float getAzimuth () {
+    public float getAzimuth() {
         return 0;
     }
 
     @Override
-    public float getPitch () {
+    public float getPitch() {
         return 0;
     }
 
     @Override
-    public float getRoll () {
+    public float getRoll() {
         return 0;
     }
 
     @Override
-    public void getRotationMatrix (float[] matrix) {
+    public void getRotationMatrix(float[] matrix) {
     }
 
     @Override
-    public float getGyroscopeX () {
+    public float getGyroscopeX() {
         return 0;
     }
 
     @Override
-    public float getGyroscopeY () {
+    public float getGyroscopeY() {
         return 0;
     }
 
     @Override
-    public float getGyroscopeZ () {
+    public float getGyroscopeZ() {
         return 0;
     }
 }
