@@ -20,11 +20,13 @@ allprojects {
 }
 
 configure(subprojects) {
-  apply plugin: 'java-library'
-  apply plugin: 'io.freefair.lombok'
-  sourceCompatibility = 11
-  compileJava {
-    options.incremental = true
+  if (it.name != 'android' && it.name != 'filepicker') {
+    apply plugin: 'java-library'
+    apply plugin: 'io.freefair.lombok'
+    sourceCompatibility = 11
+    compileJava {
+      options.incremental = true
+    }
   }
 }
 
