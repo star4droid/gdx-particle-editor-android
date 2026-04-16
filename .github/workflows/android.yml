@@ -1,10 +1,7 @@
 name: Android Build
 
 on:
-  push:
-    branches: [main, master]
-  pull_request:
-    branches: [main, master]
+  workflow_dispatch:
 
 jobs:
   build:
@@ -26,7 +23,7 @@ jobs:
         run: ./gradlew :android:assembleRelease
 
       - name: Upload APK
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: app-release
           path: android/build/outputs/apk/release/android-release-unsigned.apk
