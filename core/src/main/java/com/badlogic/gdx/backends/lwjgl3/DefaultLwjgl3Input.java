@@ -192,7 +192,7 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
     }
 
     @Override
-    public void openTextInputField(NativeInputConfiguration config) {
+    public void openTextInputField(com.badlogic.gdx.input.NativeInputConfiguration config) {
 
     }
 
