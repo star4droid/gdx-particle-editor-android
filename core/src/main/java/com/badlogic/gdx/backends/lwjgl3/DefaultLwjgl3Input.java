@@ -187,7 +187,10 @@ public class DefaultLwjgl3Input extends AbstractInput implements Lwjgl3Input {
     }
 
     @Override
-    public void closeTextInputField() {
+    public void closeTextInputField(boolean cancel) {
+
+
+
 
     }
 
